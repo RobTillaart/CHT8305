@@ -54,16 +54,40 @@ public:
   float    getHumOffset()                { return _humOffset; };
   float    getTempOffset()               { return _tempOffset; };
 
+  //  CONFIG REGISTER
+  void     setConfigRegister(uint16_t bitmask);
+  uint16_t getConfigRegister();
+  //  TODO more specific functions. datasheet!
+  //  bit     meaning
+  //  15      softReset 
+  //  14      clock stretch
+  //  13      heater
+  //  12      mode
+  //  11      vccs  
+  //  10      T-RES
+  //  9-8     H-res
+  //  7-6     ALTM
+  //  5       APS
+  //  4       HALT
+  //  3       TALT
+  //  2       VCCenable
+  //  1-0     reserved.
+  void     softReset();
+  
+  //  VOLTAGE
+  float    getVoltage();
 
-  //  todo
+  //  META DATA
+  uint16_t getManufacturer();
+  uint16_t getVersionID();
+  
+
+  //  ALERT REGISTER
   //
   //  setAlarmT() - need to set them both at once.
   //  getAlarmT()
   //  setAlarmH()
   //  getAlarmH()
-  //
-  //  getConfigRegister() - which flags are most interesting
-  //  softreset()
 
 
 private:

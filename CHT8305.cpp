@@ -90,6 +90,40 @@ int CHT8305::read()
 }
 
 
+////////////////////////////////////////////////
+//
+//  CONFIG REGISTER
+//
+void CHT8305::setConfigRegister(uint16_t bitmask)
+{
+  uint8_t data[2];
+  data[0] = bitmask >> 8;
+  data[1] = bitmask & 0xFF;
+  _writeRegister(2, &data[0], 2);
+}
+
+
+uint16_t CHT8305::getConfigRegister()
+{
+  uint8_t data[2];
+  _readRegister(2, &data[0], 2);
+  uint16_t tmp = data[0] << 8 | data[1];
+  return tmp;
+}
+
+
+void CHT8305::softReset()
+{
+  uint16_t tmp = getConfigRegister();   //  TODO check datasheet again.
+  tmp |= 0x8000;
+  setConfigRegister(tmp);
+}
+
+
+////////////////////////////////////////////////
+//
+//  PRIVATE
+//
 int CHT8305::_readRegister(uint8_t reg, uint8_t * buf, uint8_t size)
 {
   _wire->beginTransmission(_address);
@@ -97,7 +131,8 @@ int CHT8305::_readRegister(uint8_t reg, uint8_t * buf, uint8_t size)
   int n = _wire->endTransmission();
   if (n != 0) return CHT8305_ERROR_I2C;
 
-  delay(20);
+  if (reg == 0x00) delay(7);
+
   n = _wire->requestFrom(_address, size);
   if (n == size)
   {

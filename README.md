@@ -57,6 +57,10 @@ I2C bus speeds supported up to 400 KHz.
 |  SCL  |    0x43    |
 
 
+Pull ups are needed on SDA, SCL and optional to ALERT.
+
+
+
 ## Interface
 
 - **CHT8305(TwoWire \*wire = &Wire)** Constructor with default I2C bus.
@@ -82,15 +86,58 @@ under- or overflow at the ends of the sensor range.
 - **float getTempOffset()** idem.
 
 
-## Config register 
+### Config register 
 
-TODO - should this be in the readme?
+- **void setConfigRegister(uint16_t bitmask)**
+- **uint16_t getConfigRegister()**
+- **void softReset()**
+
+
+- TODO more specific functions.
+
+|  bit  |  meaning        |
+|:-----:|:----------------|
+|  15   |  soft reset     |
+|  14   |  clock stretch  |
+|  13   |  heater         |
+|  12   |  mode           |
+|  11   |  vccs           |
+|  10   |  T-RES          |
+|  9-8  |  H-res          |
+|  7-6  |  ALTM           |
+|  5    |  APS            |
+|  4    |  HALT           |
+|  3    |  TALT           |
+|  2    |  VCCenable      |
+|  1-0  |  reserved.      |
+
+
+### Alert
+
+TODO elaborate
+
+
+### Voltage
+
+TODO elaborate
+
+- **float getVoltage()**
+
+
+### Meta data
+
+TODO elaborate
+
+- **uint16_t getManufacturer()** 
+- **uint16_t getVersionID()**
 
 
 ## Future
 
 - improve documentation
 - make code functional complete
+- fix TODO's in code
+
 
 #### test
 
