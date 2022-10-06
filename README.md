@@ -8,11 +8,13 @@
 
 Arduino library for CHT8305 temperature and humidity sensor.
 
-**EXPERIMENTAL** not tested yet - todo buy hardware.
+**EXPERIMENTAL** not tested yet - todo buy hardware + test.
+
 
 ## Description
 
 The CHT8305 is a temperature and humidity sensor.
+
 It supports an ALERT pin, see below.
 
 
@@ -22,16 +24,19 @@ It supports an ALERT pin, see below.
 TODO  NOT CORRECT CHECK DATASHEET.
 Placeholder.
 
-
+```
 //  Always check datasheet - front view
 //
-//          +--------------+
-//  VDD ----| 1            |
-//  SDA ----| 2   CHT8305  |    NOT CORRECT CHECK DATASHEET.
-//  GND ----| 3            |
-//  SCL ----| 4            |
-//          +--------------+
-
+//          +---------------+
+//  VCC ----| VCC           |
+//  SDA ----| SDA  CHT8305  |   TODO CHECK DATASHEET.
+//  GND ----| GND           |
+//  SCL ----| SCL           |
+//   ?  ----| AD0           |   ? depends on address to select
+//          |               |
+//  IRQ ----| ALERT         |   only if enabled.
+//          +---------------+
+```
 
 
 ### Alert
@@ -42,14 +47,14 @@ It has ALERT logic output pin with open drain structure, which is active low.
 
 ## I2C 
 
-Speeds supported up to 400 KHz
+I2C bus speeds supported up to 400 KHz.
 
 |  AD0  |   Address  |
 |:-----:|:----------:|
-|  GND  |  0x40      |
-|  VCC  |  0x41      |
-|  SDA  |  0x42      |
-|  SCL  |  0x43      |
+|  GND  |    0x40    |
+|  VCC  |    0x41    |
+|  SDA  |    0x42    |
+|  SCL  |    0x43    |
 
 
 ## Interface
