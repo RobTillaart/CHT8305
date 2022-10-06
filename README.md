@@ -93,10 +93,10 @@ under- or overflow at the ends of the sensor range.
 - **void softReset()**
 
 
-- TODO more specific functions.
+TODO more specific functions.
 
-|  bit  |  meaning        |
-|:-----:|:----------------|
+|  bit  |  name           |  description  |
+|:-----:|:----------------|:--------------|
 |  15   |  soft reset     |
 |  14   |  clock stretch  |
 |  13   |  heater         |
@@ -134,9 +134,12 @@ TODO elaborate
 
 ## Future
 
-- improve documentation
-- make code functional complete
-- fix TODO's in code
+- improve documentation.
+- make code functional complete.
+  - config register.
+  - alert function
+- fix TODO's in code.
+- fix TODO's in readme.
 
 
 #### test
@@ -145,4 +148,7 @@ TODO elaborate
 - test AVR, ESP32, ...
 - test performance
 = test I2C speed
+- test resolution bits
+- test alert function
+- 
 

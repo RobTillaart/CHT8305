@@ -6,12 +6,15 @@
 
 //  Always check datasheet - front view
 //
-//          +--------------+
-//  VDD ----| 1            |
-//  SDA ----| 2   CHT8305  |
-//  GND ----| 3            |
-//  SCL ----| 4            |
-//          +--------------+
+//          +---------------+
+//  VCC ----| VCC           |
+//  SDA ----| SDA  CHT8305  |   TODO CHECK DATASHEET.
+//  GND ----| GND           |
+//  SCL ----| SCL           |
+//   ?  ----| AD0           |   ? depends on address to select
+//          |               |
+//  IRQ ----| ALERT         |   only if enabled.
+//          +---------------+
 
 
 #include "CHT8305.h"

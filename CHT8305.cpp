@@ -122,6 +122,42 @@ void CHT8305::softReset()
 
 ////////////////////////////////////////////////
 //
+//  VOLTAGE
+//
+float CHT8305::getVoltage()     //  TODO check datasheet again.
+{
+  uint8_t data[2];
+  _readRegister(2, &data[0], 2);
+  uint16_t tmp = data[0] << 8 | data[1];
+  return 1.0  * tmp;
+}
+
+
+
+////////////////////////////////////////////////
+//
+//  META DATA
+//
+uint16_t CHT8305::getManufacturer()
+{
+  uint8_t data[2];
+  _readRegister(0xFE, &data[0], 2);
+  uint16_t tmp = data[0] << 8 | data[1];
+  return tmp;
+}
+
+
+uint16_t CHT8305::getVersionID()
+{
+  uint8_t data[2];
+  _readRegister(0xFF, &data[0], 2);
+  uint16_t tmp = data[0] << 8 | data[1];
+  return tmp;
+}
+
+
+////////////////////////////////////////////////
+//
 //  PRIVATE
 //
 int CHT8305::_readRegister(uint8_t reg, uint8_t * buf, uint8_t size)
