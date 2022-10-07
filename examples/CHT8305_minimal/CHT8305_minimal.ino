@@ -35,6 +35,11 @@ void setup()
   Serial.println(CHT8305_LIB_VERSION);
   Serial.println();
 
+
+  Serial.println(CHT.getManufacturer());
+  Serial.println(CHT.getVersionID());
+  Serial.println(CHT.getVoltage());
+
   delay(1000);
 }
 

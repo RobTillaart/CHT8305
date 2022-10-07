@@ -7,7 +7,7 @@
 //
 //  HISTORY
 //  2022-10-06  0.1.0  initial version
-//  
+//
 
 
 #include "CHT8305.h"
@@ -76,7 +76,7 @@ int CHT8305::read()
   }
   _lastRead = millis();
 
-  uint8_t data[4];
+  uint8_t data[4] = {0, 0, 0, 0 };
   _readRegister(0, &data[0], 4);
   uint16_t tmp = data[0] << 8 | data[1];
   _temperature = tmp * (165.0 / 65535.0) - 40.0;
@@ -105,7 +105,7 @@ void CHT8305::setConfigRegister(uint16_t bitmask)
 
 uint16_t CHT8305::getConfigRegister()
 {
-  uint8_t data[2];
+  uint8_t data[2] = { 0, 0};
   _readRegister(2, &data[0], 2);
   uint16_t tmp = data[0] << 8 | data[1];
   return tmp;
@@ -114,7 +114,7 @@ uint16_t CHT8305::getConfigRegister()
 
 void CHT8305::softReset()
 {
-  uint16_t tmp = getConfigRegister();   //  TODO check datasheet again.
+  uint16_t tmp = getConfigRegister();
   tmp |= 0x8000;
   setConfigRegister(tmp);
 }
@@ -124,14 +124,15 @@ void CHT8305::softReset()
 //
 //  VOLTAGE
 //
-float CHT8305::getVoltage()     //  TODO check datasheet again.
+//  TODO verify conversion unit
+//  TODO check datasheet.
+float CHT8305::getVoltage()
 {
-  uint8_t data[2];
+  uint8_t data[2] = { 0, 0};
   _readRegister(2, &data[0], 2);
   uint16_t tmp = data[0] << 8 | data[1];
-  return 1.0  * tmp;
+  return tmp * (5.0 / 65535.0);  //  this is best guess
 }
-
 
 
 ////////////////////////////////////////////////
@@ -140,7 +141,7 @@ float CHT8305::getVoltage()     //  TODO check datasheet again.
 //
 uint16_t CHT8305::getManufacturer()
 {
-  uint8_t data[2];
+  uint8_t data[2] = { 0, 0};
   _readRegister(0xFE, &data[0], 2);
   uint16_t tmp = data[0] << 8 | data[1];
   return tmp;
@@ -149,7 +150,7 @@ uint16_t CHT8305::getManufacturer()
 
 uint16_t CHT8305::getVersionID()
 {
-  uint8_t data[2];
+  uint8_t data[2] = { 0, 0};
   _readRegister(0xFF, &data[0], 2);
   uint16_t tmp = data[0] << 8 | data[1];
   return tmp;
@@ -167,7 +168,7 @@ int CHT8305::_readRegister(uint8_t reg, uint8_t * buf, uint8_t size)
   int n = _wire->endTransmission();
   if (n != 0) return CHT8305_ERROR_I2C;
 
-  if (reg == 0x00) delay(7);
+  if (reg == 0x00) delay(14);  //  2x 6.5 ms @ 14 bit.
 
   n = _wire->requestFrom(_address, size);
   if (n == size)

@@ -42,7 +42,7 @@ public:
   int      read();
   //  lastRead is in MilliSeconds since start sketch
   uint32_t lastRead()                    { return _lastRead; };
-  
+
   //  preferred interface
   float    getHumidity()                 { return _humidity; };
   float    getTemperature()              { return _temperature; };
@@ -59,11 +59,11 @@ public:
   uint16_t getConfigRegister();
   //  TODO more specific functions. datasheet!
   //  bit     meaning
-  //  15      softReset 
+  //  15      softReset
   //  14      clock stretch
   //  13      heater
   //  12      mode
-  //  11      vccs  
+  //  11      vccs
   //  10      T-RES
   //  9-8     H-res
   //  7-6     ALTM
@@ -73,14 +73,14 @@ public:
   //  2       VCCenable
   //  1-0     reserved.
   void     softReset();
-  
+
   //  VOLTAGE
   float    getVoltage();
 
   //  META DATA
-  uint16_t getManufacturer();
-  uint16_t getVersionID();
-  
+  uint16_t getManufacturer();     //  expect 0x5959
+  uint16_t getVersionID();        //  may vary
+
 
   //  ALERT REGISTER
   //
@@ -99,7 +99,7 @@ private:
 
   TwoWire* _wire;
   uint8_t  _address       = 0x40;
-  
+
   int _readRegister(uint8_t reg, uint8_t * buf, uint8_t size);
   int _writeRegister(uint8_t reg, uint8_t * buf, uint8_t size);
 };
