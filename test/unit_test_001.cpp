@@ -121,7 +121,7 @@ unittest(test_AlertTriggerMode)
 }
 
 
-unittest(test_AlertTriggerMode)
+unittest(test_setAlertLevels)
 {
   CHT8305 cht;
 
