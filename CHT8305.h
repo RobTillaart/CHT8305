@@ -14,15 +14,36 @@
 
 #define CHT8305_LIB_VERSION              (F("0.1.1"))
 
-
+//  ERRORS
 #define CHT8305_OK                       0
 #define CHT8305_ERROR_ADDR               -10
 #define CHT8305_ERROR_I2C                -11
 #define CHT8305_ERROR_CONNECT            -12
-
 #define CHT8305_ERROR_LASTREAD           -20
 
+//  REGISTERS
+#define CHT8305_REG_TEMPERATURE          0x00
+#define CHT8305_REG_HUMIDITY             0x01
+#define CHT8305_REG_CONFIG               0x02
+#define CHT8305_REG_ALERT                0x03
+#define CHT8305_REG_VOLTAGE              0x04
+#define CHT8305_REG_MANUFACTURER         0xFF
+#define CHT8305_REG_VERSION              0xFE
 
+//  REGISTER MASKS
+#define CHT8305_CFG_SOFT_RESET          0x8000
+#define CHT8305_CFG_CLOCK_STRETCH       0x4000
+#define CHT8305_CFG_HEATER              0x2000
+#define CHT8305_CFG_MODE                0x1000
+#define CHT8305_CFG_VCCS                0x0800
+#define CHT8305_CFG_TEMP_RES            0x0400
+#define CHT8305_CFG_HUMI_RES            0x0300
+#define CHT8305_CFG_ALERT_MODE          0x00C0
+#define CHT8305_CFG_ALERT_PENDING       0x0020
+#define CHT8305_CFG_ALERT_HUMI          0x0010
+#define CHT8305_CFG_ALERT_TEMP          0x0008
+#define CHT8305_CFG_VCC_ENABLE          0x0004
+#define CHT8305_CFG_VCC_RESERVED        0x0003
 
 
 class CHT8305
