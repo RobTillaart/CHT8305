@@ -10,15 +10,40 @@
 //  2022-10-08  0.1.1  add config specific functions
 //                     fix ESP32 begin() address check
 //                     add config ALERT functions.
-//
+//                     add constants for registers
+//                     fix getVoltage() register
 
 
 #include "CHT8305.h"
 
 
-//  TODO   MAGIC NRS
-//  TODO   REGISTERS
-//  TODO   REGISTER MASKS
+//  REGISTERS
+
+#define CHT8305_REG_TEMPERATURE          0x00
+#define CHT8305_REG_HUMIDITY             0x01
+#define CHT8305_REG_CONFIG               0x02
+#define CHT8305_REG_ALERT                0x03
+#define CHT8305_REG_VOLTAGE              0x04
+#define CHT8305_REG_MANUFACTURER         0xFF
+#define CHT8305_REG_VERSION              0xFE
+
+
+//  REGISTER MASKS
+
+#define CHT8305_CFG_SOFT_RESET          0x8000
+#define CHT8305_CFG_CLOCK_STRETCH       0x4000
+#define CHT8305_CFG_HEATER              0x2000
+#define CHT8305_CFG_MODE                0x1000
+#define CHT8305_CFG_VCCS                0x0800
+#define CHT8305_CFG_TEMP_RES            0x0400
+#define CHT8305_CFG_HUMI_RES            0x0300
+#define CHT8305_CFG_ALERT_MODE          0x00C0
+#define CHT8305_CFG_ALERT_PENDING       0x0020
+#define CHT8305_CFG_ALERT_HUMI          0x0010
+#define CHT8305_CFG_ALERT_TEMP          0x0008
+#define CHT8305_CFG_VCC_ENABLE          0x0004
+#define CHT8305_CFG_VCC_RESERVED        0x0003
+
 
 
 /////////////////////////////////////////////////////
@@ -85,7 +110,8 @@ int CHT8305::read()
   _lastRead = millis();
 
   uint8_t data[4] = {0, 0, 0, 0 };
-  _readRegister(0, &data[0], 4);
+  _readRegister(CHT8305_REG_TEMPERATURE, &data[0], 4);
+
   uint16_t tmp = data[0] << 8 | data[1];
   _temperature = tmp * (165.0 / 65535.0) - 40.0;
    tmp = data[2] << 8 | data[3];
@@ -114,7 +140,7 @@ void CHT8305::setConfigRegister(uint16_t bitmask)
 uint16_t CHT8305::getConfigRegister()
 {
   uint8_t data[2] = { 0, 0};
-  _readRegister(2, &data[0], 2);
+  _readRegister(CHT8305_REG_CONFIG, &data[0], 2);
   uint16_t tmp = data[0] << 8 | data[1];
   return tmp;
 }
@@ -259,14 +285,14 @@ bool CHT8305::setAlertLevels(float temperature, float humidity)
 
   tmp = (temperature + 40.0) * (65535.0 / 165.0);
   mask |= tmp;
-  _writeRegister(0x03, (uint8_t *)&mask, 2);
+  _writeRegister(CHT8305_REG_ALERT, (uint8_t *)&mask, 2);
   return true;
 }
 
 float CHT8305::getAlertLevelTemperature()
 {
   uint16_t data = 0;
-  _readRegister(0x03, (uint8_t *)&data, 2);
+  _readRegister(CHT8305_REG_ALERT, (uint8_t *)&data, 2);
   data &= 0x01FF;
   return data * (165.0 / 65535.0) - 40.0;
 }
@@ -275,7 +301,7 @@ float CHT8305::getAlertLevelTemperature()
 float CHT8305::getAlertLevelHumidity()
 {
   uint16_t data = 0;
-  _readRegister(0x03, (uint8_t *)&data, 2);  // could be done with 1 byte?
+  _readRegister(CHT8305_REG_ALERT, (uint8_t *)&data, 2);
   data >>= 9;
   return data * (100.0 / 65535.0);
 }
@@ -293,7 +319,7 @@ float CHT8305::getAlertLevelHumidity()
 float CHT8305::getVoltage()
 {
   uint8_t data[2] = { 0, 0};
-  _readRegister(2, &data[0], 2);
+  _readRegister(CHT8305_REG_VOLTAGE, &data[0], 2);
   uint16_t tmp = data[0] << 8 | data[1];
   return tmp * (5.0 / 65535.0);  //  this is best guess
 }
@@ -306,7 +332,7 @@ float CHT8305::getVoltage()
 uint16_t CHT8305::getManufacturer()
 {
   uint8_t data[2] = { 0, 0};
-  _readRegister(0xFE, &data[0], 2);
+  _readRegister(CHT8305_REG_MANUFACTURER, &data[0], 2);
   uint16_t tmp = data[0] << 8 | data[1];
   return tmp;
 }
@@ -315,7 +341,7 @@ uint16_t CHT8305::getManufacturer()
 uint16_t CHT8305::getVersionID()
 {
   uint8_t data[2] = { 0, 0};
-  _readRegister(0xFF, &data[0], 2);
+  _readRegister(CHT8305_REG_VERSION, &data[0], 2);
   uint16_t tmp = data[0] << 8 | data[1];
   return tmp;
 }
@@ -332,7 +358,10 @@ int CHT8305::_readRegister(uint8_t reg, uint8_t * buf, uint8_t size)
   int n = _wire->endTransmission();
   if (n != 0) return CHT8305_ERROR_I2C;
 
-  if (reg == 0x00) delay(14);  //  2x 6.5 ms @ 14 bit.
+  if (reg == CHT8305_REG_TEMPERATURE)  //  wait for conversion...
+  {
+    delay(14);  //  2x 6.5 ms @ 14 bit. 
+  }
 
   n = _wire->requestFrom(_address, size);
   if (n == size)
