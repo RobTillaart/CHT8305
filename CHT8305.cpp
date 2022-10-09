@@ -222,7 +222,8 @@ void CHT8305::setTemperatureResolution(uint8_t res)
 
 uint8_t CHT8305::getTemperatureResolution()
 {
-  return (getConfigRegister() & CHT8305_CFG_TEMP_RES) > 0;
+  if (getConfigRegister() & CHT8305_CFG_TEMP_RES) return 1;
+  return 0;
 }
 
 
