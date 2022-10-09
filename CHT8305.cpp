@@ -260,8 +260,8 @@ bool CHT8305::getVCCenable()
 //
 bool CHT8305::setAlertTriggerMode(uint8_t mode)
 {
-  _clrConfigMask(CHT8305_CFG_ALERT_MODE);
   if (mode > 3) return false;   //  check 0,1,2,3
+  _clrConfigMask(CHT8305_CFG_ALERT_MODE);
   uint16_t mask = mode << 6;
   _setConfigMask(mask);
   return true;

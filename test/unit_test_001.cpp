@@ -133,8 +133,6 @@ unittest(test_setAlertLevels)
 }
 
 
-
-
 unittest_main()
 
 
