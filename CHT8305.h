@@ -146,14 +146,6 @@ public:
   uint16_t getVersionID();        //  may vary
 
 
-  //  ALERT REGISTER
-  //
-  //  setAlarmT() - need to set them both at once.
-  //  getAlarmT()
-  //  setAlarmH()
-  //  getAlarmH()
-
-
 private:
   float    _humOffset     = 0.0;
   float    _tempOffset    = 0.0;
