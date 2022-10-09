@@ -1,7 +1,7 @@
 //
 //    FILE: CHT8305.cpp
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.1.1
+// VERSION: 0.1.2
 // PURPOSE: Arduino library for CHT8305 temperature and humidity sensor
 //     URL: https://github.com/RobTillaart/CH8305
 //
@@ -12,6 +12,8 @@
 //                     add config ALERT functions.
 //                     add constants for registers
 //                     fix getVoltage() register
+//  2022-10-xx  0.1.2  update unit tests
+//  
 
 
 #include "CHT8305.h"

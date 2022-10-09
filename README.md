@@ -193,7 +193,6 @@ similar to temperature and humidity.  To be verified.
 - test (see below)
 - elaborate documentation.
 
-
 #### test
 
 - test Temperature and Humidity
@@ -207,4 +206,7 @@ similar to temperature and humidity.  To be verified.
 - test getManufacturer(), getVersionID().
 - test write / readRegister with a single uint16_t to simplify code.
 
+### Could
 
+- add getAddress()
+- 
