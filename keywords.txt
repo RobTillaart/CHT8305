@@ -16,6 +16,32 @@ setTempOffset	KEYWORD2
 getHumOffset	KEYWORD2
 getTempOffset	KEYWORD2
 
+setConfigRegister	KEYWORD2
+getConfigRegister	KEYWORD2
+
+softReset	KEYWORD2
+setI2CClockStretch	KEYWORD2
+getI2CClockStretch	KEYWORD2
+setHeaterOn	KEYWORD2
+getHeate	KEYWORD2
+
+setMeasurementMode	KEYWORD2
+getMeasurementMode	KEYWORD2
+getVCCstatus	KEYWORD2
+setTemperatureResolution	KEYWORD2
+getTemperatureResolution	KEYWORD2
+
+setHumidityResolution	KEYWORD2
+getHumidityResolution	KEYWORD2
+setVCCenable	KEYWORD2
+getVCCenable	KEYWORD2
+
+
+
+
+
+
+
 
 # Constants (LITERAL1)
 CHT8305_LIB_VERSION	LITERAL1

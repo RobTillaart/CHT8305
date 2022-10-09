@@ -1,16 +1,24 @@
 //
 //    FILE: CHT8305.cpp
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.1.0
+// VERSION: 0.1.1
 // PURPOSE: Arduino library for CHT8305 temperature and humidity sensor
 //     URL: https://github.com/RobTillaart/CH8305
 //
 //  HISTORY
 //  2022-10-06  0.1.0  initial version
+//  2022-10-08  0.1.1  add config specific functions
+//                     fix ESP32 begin() address check
+//                     add config ALERT functions.
 //
 
 
 #include "CHT8305.h"
+
+
+//  TODO   MAGIC NRS
+//  TODO   REGISTERS
+//  TODO   REGISTER MASKS
 
 
 /////////////////////////////////////////////////////
@@ -27,7 +35,7 @@ CHT8305::CHT8305(TwoWire *wire)
 #if defined (ESP8266) || defined(ESP32)
 int CHT8305::begin(int sda, int scl, const uint8_t address)
 {
-  if ((address < 0x50) || (address > 0x57)) return CHT8305_ERROR_ADDR;
+  if ((address < 0x40) || (address > 0x43)) return CHT8305_ERROR_ADDR;
 
   _wire = &Wire;
   _address = address;
@@ -114,10 +122,165 @@ uint16_t CHT8305::getConfigRegister()
 
 void CHT8305::softReset()
 {
-  uint16_t tmp = getConfigRegister();
-  tmp |= 0x8000;
-  setConfigRegister(tmp);
+  _setConfigMask(0x8000);
 }
+
+
+void CHT8305::setI2CClockStretch(bool on)
+{
+  if (on) _setConfigMask(0x4000);
+  else    _clrConfigMask(0x4000);
+}
+
+
+bool CHT8305::getI2CClockStretch()
+{
+  return (getConfigRegister() & 0x4000) > 0;
+}
+
+void CHT8305::setHeaterOn(bool on)
+{
+  if (on) _setConfigMask(0x2000);
+  else    _clrConfigMask(0x2000);
+}
+
+
+bool CHT8305::getHeater()
+{
+  return (getConfigRegister() & 0x2000) > 0;
+}
+
+
+void CHT8305::setMeasurementMode(bool both)
+{
+  if (both) _setConfigMask(0x1000);
+  else      _clrConfigMask(0x1000);
+}
+
+
+bool CHT8305::getMeasurementMode()
+{
+  return (getConfigRegister() & 0x1000) > 0;
+}
+
+
+bool CHT8305::getVCCstatus()
+{
+  return (getConfigRegister() & 0x0800) > 0;
+}
+
+
+void CHT8305::setTemperatureResolution(bool b)
+{
+  if (b) _setConfigMask(0x0400);
+  else   _clrConfigMask(0x0400);
+}
+
+
+bool CHT8305::getTemperatureResolution()
+{
+  return (getConfigRegister() & 0x0400) > 0;
+}
+
+
+void CHT8305::setHumidityResolution(uint8_t res)
+{
+  _clrConfigMask(0x0300);
+  if (res == 2)_setConfigMask(0x0100);
+  if (res == 3)_setConfigMask(0x0200);
+}
+
+
+uint8_t CHT8305::getHumidityResolution()
+{
+ return (getConfigRegister() & 0x0300) >> 8;
+}
+
+
+void CHT8305::setVCCenable(bool enable)
+{
+  if (enable) _setConfigMask(0x0002);
+  else        _clrConfigMask(0x0002);
+}
+
+
+bool CHT8305::getVCCenable()
+{
+ return (getConfigRegister() & 0x0002) > 0;
+}
+
+
+////////////////////////////////////////////////
+//
+//  ALERT (config register)
+//
+bool CHT8305::setAlertTriggerMode(uint8_t mode)
+{
+  if (mode > 3) return false;   //  check 0,1,2,3
+  uint16_t _mode = mode << 6;
+  _setConfigMask(_mode);
+  return true;
+}
+
+
+uint8_t CHT8305::getAlertTriggerMode()
+{
+ return (getConfigRegister() & 0x00C0) >> 6;
+}
+
+
+bool CHT8305::getAlertPendingStatus()
+{
+ return (getConfigRegister() & 0x0020) > 0;
+}
+
+
+bool CHT8305::getAlertHumidityStatus()
+{
+ return (getConfigRegister() & 0x0010) > 0;
+}
+
+
+bool CHT8305::getAlertTemperatureStatus()
+{
+ return (getConfigRegister() & 0x0004) > 0;
+}
+
+
+bool CHT8305::setAlertLevels(float temperature, float humidity)
+{
+  //  range check
+  if ((temperature < -40 ) || (temperature > 125)) return false;
+  if ((humidity < 0 )      || (humidity > 100)) return false;
+
+  uint16_t mask = 0;
+  uint16_t tmp = humidity * (65535.0/100.0);
+  mask = tmp << 9;
+
+  tmp = (temperature + 40.0) * (65535.0 / 165.0);
+  mask |= tmp;
+  _writeRegister(0x03, (uint8_t *)&mask, 2);
+  return true;
+}
+
+float CHT8305::getAlertLevelTemperature()
+{
+  uint16_t data = 0;
+  _readRegister(0x03, (uint8_t *)&data, 2);
+  data &= 0x01FF;
+  return data * (165.0 / 65535.0) - 40.0;
+}
+
+
+float CHT8305::getAlertLevelHumidity()
+{
+  uint16_t data = 0;
+  _readRegister(0x03, (uint8_t *)&data, 2);  // could be done with 1 byte?
+  data >>= 9;
+  return data * (100.0 / 65535.0);
+}
+
+
 
 
 ////////////////////////////////////////////////
@@ -126,6 +289,7 @@ void CHT8305::softReset()
 //
 //  TODO verify conversion unit
 //  TODO check datasheet.
+//  TODO uint16_t in read register.
 float CHT8305::getVoltage()
 {
   uint8_t data[2] = { 0, 0};
@@ -193,6 +357,22 @@ int CHT8305::_writeRegister(uint8_t reg, uint8_t * buf, uint8_t size)
   int n = _wire->endTransmission();
   if (n != 0) return CHT8305_ERROR_I2C;
   return CHT8305_OK;
+}
+
+
+void CHT8305::_setConfigMask(uint16_t mask)
+{
+  uint16_t tmp = getConfigRegister();
+  tmp |= mask;
+  setConfigRegister(tmp);
+}
+
+
+void CHT8305::_clrConfigMask(uint16_t mask)
+{
+  uint16_t tmp = getConfigRegister();
+  tmp &= ~mask;
+  setConfigRegister(tmp);
 }
 
 
