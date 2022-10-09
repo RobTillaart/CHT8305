@@ -15,7 +15,7 @@
 //  2022-10-xx  0.1.2  update unit tests
 //                     fix humidity resolution param.
 //                     fix setAlertLevels()
-//                     refactor
+//                     refactor, move code to .cpp
 
 
 #include "CHT8305.h"
@@ -98,6 +98,48 @@ int CHT8305::read()
   return CHT8305_OK;
 }
 
+
+//  MilliSeconds since start sketch
+uint32_t CHT8305::lastRead()
+{
+  return _lastRead; 
+};
+
+
+float CHT8305::getHumidity()
+{ 
+  return _humidity; 
+};
+
+
+float CHT8305::getTemperature()
+{ 
+  return _temperature; 
+};
+
+
+void CHT8305::setHumOffset(float offset)
+{
+  _humOffset = offset; 
+};
+
+
+void CHT8305::setTempOffset(float offset)
+{ 
+  _tempOffset = offset; 
+};
+
+
+float CHT8305::getHumOffset()
+{ 
+  return _humOffset; 
+};
+
+
+float CHT8305::getTempOffset()
+{ 
+  return _tempOffset;
+};
 
 ////////////////////////////////////////////////
 //

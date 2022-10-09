@@ -62,18 +62,16 @@ public:
   //  read the temperature and humidity.
   int      read();
   //  lastRead is in MilliSeconds since start sketch
-  uint32_t lastRead()                    { return _lastRead; };
-
-  //  preferred interface
-  float    getHumidity()                 { return _humidity; };
-  float    getTemperature()              { return _temperature; };
+  uint32_t lastRead();
+  float    getHumidity();
+  float    getTemperature();
 
   //  adding offsets works well in normal range
-  // might introduce under- or overflow at the ends of the sensor range
-  void     setHumOffset(float offset)    { _humOffset = offset; };
-  void     setTempOffset(float offset)   { _tempOffset = offset; };
-  float    getHumOffset()                { return _humOffset; };
-  float    getTempOffset()               { return _tempOffset; };
+  //  might introduce under- or overflow at the ends of the sensor range
+  void     setHumOffset(float offset);
+  void     setTempOffset(float offset);
+  float    getHumOffset();
+  float    getTempOffset();
 
   //  CONFIG REGISTER
   void     setConfigRegister(uint16_t bitmask);
