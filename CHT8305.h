@@ -27,8 +27,8 @@
 #define CHT8305_REG_CONFIG               0x02
 #define CHT8305_REG_ALERT                0x03
 #define CHT8305_REG_VOLTAGE              0x04
-#define CHT8305_REG_MANUFACTURER         0xFF
-#define CHT8305_REG_VERSION              0xFE
+#define CHT8305_REG_MANUFACTURER         0xFE
+#define CHT8305_REG_VERSION              0xFF
 
 //  REGISTER MASKS
 #define CHT8305_CFG_SOFT_RESET          0x8000
