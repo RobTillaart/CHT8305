@@ -96,13 +96,13 @@ public:
   //  |  1-0  | 0x0003 |  reserved.      |  do not change.
   //
   //  specific config functions. See datasheet!
-  //  first iteration.
+  //
   void     softReset();
 
   void     setI2CClockStretch(bool on = false);
   bool     getI2CClockStretch();
 
-  void     setHeaterOn(bool on = false);              //  !!!  user is responsible for timing!
+  void     setHeaterOn(bool on = false);              //  WARNING: user is responsible for timing!
   bool     getHeater();
 
   void     setMeasurementMode(bool both = true);
@@ -110,11 +110,11 @@ public:
 
   bool     getVCCstatus();
 
-  void     setTemperatureResolution(bool b = false);
-  bool     getTemperatureResolution();
+  void     setTemperatureResolution(uint8_t res = 0); //  1 = 11 bit, other = 14 bit
+  uint8_t  getTemperatureResolution();
 
-  void     setHumidityResolution(uint8_t r = 0);      //  0,2,3
-  uint8_t  getHumidityResolution();                   //  0,2,3
+  void     setHumidityResolution(uint8_t res = 0);    //  2 = 8 bit, 1 = 11 bit, other = 14 bit
+  uint8_t  getHumidityResolution();                   //  idem
 
   void     setVCCenable(bool enable = false);
   bool     getVCCenable();
@@ -125,13 +125,14 @@ public:
   //    1      T
   //    2      H
   //    3      T and H
-  bool     setAlertTriggerMode(uint8_t mode = 0);     //  0,1,2,3
+  bool     setAlertTriggerMode(uint8_t mode = 0);     //  0, 1, 2, 3
   uint8_t  getAlertTriggerMode();
   bool     getAlertPendingStatus();
   bool     getAlertHumidityStatus();
   bool     getAlertTemperatureStatus();
 
-  //       mandatory to set them both.
+  //       it is mandatory to set both values.
+  //       optionally use 125.0 for temperature and 100.0 for humidity
   bool     setAlertLevels(float temperature, float humidity);
   float    getAlertLevelTemperature();
   float    getAlertLevelHumidity();

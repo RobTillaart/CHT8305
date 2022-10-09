@@ -13,7 +13,9 @@
 //                     add constants for registers
 //                     fix getVoltage() register
 //  2022-10-xx  0.1.2  update unit tests
-//  
+//                     fix humidity resolution param.
+//                     fix setAlertLevels()
+//                     refactor
 
 
 #include "CHT8305.h"
@@ -169,14 +171,14 @@ bool CHT8305::getVCCstatus()
 }
 
 
-void CHT8305::setTemperatureResolution(bool b)
+void CHT8305::setTemperatureResolution(uint8_t res)
 {
-  if (b) _setConfigMask(CHT8305_CFG_TEMP_RES);
-  else   _clrConfigMask(CHT8305_CFG_TEMP_RES);
+  if (res == 1) _setConfigMask(CHT8305_CFG_TEMP_RES);
+  else          _clrConfigMask(CHT8305_CFG_TEMP_RES);
 }
 
 
-bool CHT8305::getTemperatureResolution()
+uint8_t CHT8305::getTemperatureResolution()
 {
   return (getConfigRegister() & CHT8305_CFG_TEMP_RES) > 0;
 }
@@ -184,10 +186,10 @@ bool CHT8305::getTemperatureResolution()
 
 void CHT8305::setHumidityResolution(uint8_t res)
 {
-  _clrConfigMask(CHT8305_CFG_HUMI_RES);
-  if (res == 2)_setConfigMask(0x0100);  //  magic
-  if (res == 3)_setConfigMask(0x0200);  //  magic
-  //  default == 00 if not 2 or 3
+  _clrConfigMask(CHT8305_CFG_HUMI_RES); //  set bits to 00
+  if (res == 2)_setConfigMask(0x0200);  //   8 bit
+  if (res == 1)_setConfigMask(0x0100);  //  11 bit
+  //  default == 00 if not 1 or 2       //  14 bit
 }
 
 
@@ -254,11 +256,10 @@ bool CHT8305::setAlertLevels(float temperature, float humidity)
   if ((temperature < -40 ) || (temperature > 125)) return false;
   if ((humidity < 0 )      || (humidity > 100)) return false;
 
-  uint16_t mask = 0;
-  uint16_t tmp = humidity * (65535.0/100.0);
-  mask = tmp << 9;
+  uint16_t tmp  = humidity * (127.0 / 100.0);
+  uint16_t mask = tmp << 9;
 
-  tmp = (temperature + 40.0) * (65535.0 / 165.0);
+  tmp = (temperature + 40.0) * (511.0 / 165.0);
   mask |= tmp;
   _writeRegister(CHT8305_REG_ALERT, (uint8_t *)&mask, 2);
   return true;
@@ -269,6 +270,7 @@ float CHT8305::getAlertLevelTemperature()
   uint16_t data = 0;
   _readRegister(CHT8305_REG_ALERT, (uint8_t *)&data, 2);
   data &= 0x01FF;
+  data <<= 7;
   return data * (165.0 / 65535.0) - 40.0;
 }
 
@@ -277,7 +279,7 @@ float CHT8305::getAlertLevelHumidity()
 {
   uint16_t data = 0;
   _readRegister(CHT8305_REG_ALERT, (uint8_t *)&data, 2);
-  data >>= 9;
+  data &= 0xFE00;
   return data * (100.0 / 65535.0);
 }
 
