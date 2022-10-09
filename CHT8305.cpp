@@ -119,91 +119,92 @@ uint16_t CHT8305::getConfigRegister()
 
 void CHT8305::softReset()
 {
-  _setConfigMask(0x8000);
+  _setConfigMask(CHT8305_CFG_SOFT_RESET);
 }
 
 
 void CHT8305::setI2CClockStretch(bool on)
 {
-  if (on) _setConfigMask(0x4000);
-  else    _clrConfigMask(0x4000);
+  if (on) _setConfigMask(CHT8305_CFG_CLOCK_STRETCH);
+  else    _clrConfigMask(CHT8305_CFG_CLOCK_STRETCH);
 }
 
 
 bool CHT8305::getI2CClockStretch()
 {
-  return (getConfigRegister() & 0x4000) > 0;
+  return (getConfigRegister() & CHT8305_CFG_CLOCK_STRETCH) > 0;
 }
 
 void CHT8305::setHeaterOn(bool on)
 {
-  if (on) _setConfigMask(0x2000);
-  else    _clrConfigMask(0x2000);
+  if (on) _setConfigMask(CHT8305_CFG_HEATER);
+  else    _clrConfigMask(CHT8305_CFG_HEATER);
 }
 
 
 bool CHT8305::getHeater()
 {
-  return (getConfigRegister() & 0x2000) > 0;
+  return (getConfigRegister() & CHT8305_CFG_HEATER) > 0;
 }
 
 
 void CHT8305::setMeasurementMode(bool both)
 {
-  if (both) _setConfigMask(0x1000);
-  else      _clrConfigMask(0x1000);
+  if (both) _setConfigMask(CHT8305_CFG_MODE);
+  else      _clrConfigMask(CHT8305_CFG_MODE);
 }
 
 
 bool CHT8305::getMeasurementMode()
 {
-  return (getConfigRegister() & 0x1000) > 0;
+  return (getConfigRegister() & CHT8305_CFG_MODE) > 0;
 }
 
 
 bool CHT8305::getVCCstatus()
 {
-  return (getConfigRegister() & 0x0800) > 0;
+  return (getConfigRegister() & CHT8305_CFG_VCCS) > 0;
 }
 
 
 void CHT8305::setTemperatureResolution(bool b)
 {
-  if (b) _setConfigMask(0x0400);
-  else   _clrConfigMask(0x0400);
+  if (b) _setConfigMask(CHT8305_CFG_TEMP_RES);
+  else   _clrConfigMask(CHT8305_CFG_TEMP_RES);
 }
 
 
 bool CHT8305::getTemperatureResolution()
 {
-  return (getConfigRegister() & 0x0400) > 0;
+  return (getConfigRegister() & CHT8305_CFG_TEMP_RES) > 0;
 }
 
 
 void CHT8305::setHumidityResolution(uint8_t res)
 {
-  _clrConfigMask(0x0300);
-  if (res == 2)_setConfigMask(0x0100);
-  if (res == 3)_setConfigMask(0x0200);
+  _clrConfigMask(CHT8305_CFG_HUMI_RES);
+  if (res == 2)_setConfigMask(0x0100);  //  magic
+  if (res == 3)_setConfigMask(0x0200);  //  magic
+  //  default == 00 if not 2 or 3
 }
 
 
 uint8_t CHT8305::getHumidityResolution()
 {
- return (getConfigRegister() & 0x0300) >> 8;
+ return (getConfigRegister() & CHT8305_CFG_HUMI_RES) >> 8;
 }
 
 
 void CHT8305::setVCCenable(bool enable)
 {
-  if (enable) _setConfigMask(0x0002);
-  else        _clrConfigMask(0x0002);
+  if (enable) _setConfigMask(CHT8305_CFG_VCC_ENABLE);
+  else        _clrConfigMask(CHT8305_CFG_VCC_ENABLE);
 }
 
 
 bool CHT8305::getVCCenable()
 {
- return (getConfigRegister() & 0x0002) > 0;
+ return (getConfigRegister() & CHT8305_CFG_VCC_ENABLE) > 0;
 }
 
 
@@ -213,34 +214,35 @@ bool CHT8305::getVCCenable()
 //
 bool CHT8305::setAlertTriggerMode(uint8_t mode)
 {
+  _clrConfigMask(CHT8305_CFG_ALERT_MODE);
   if (mode > 3) return false;   //  check 0,1,2,3
-  uint16_t _mode = mode << 6;
-  _setConfigMask(_mode);
+  uint16_t mask = mode << 6;
+  _setConfigMask(mask);
   return true;
 }
 
 
 uint8_t CHT8305::getAlertTriggerMode()
 {
- return (getConfigRegister() & 0x00C0) >> 6;
+ return (getConfigRegister() & CHT8305_CFG_ALERT_MODE) >> 6;
 }
 
 
 bool CHT8305::getAlertPendingStatus()
 {
- return (getConfigRegister() & 0x0020) > 0;
+ return (getConfigRegister() & CHT8305_CFG_ALERT_PENDING) > 0;
 }
 
 
 bool CHT8305::getAlertHumidityStatus()
 {
- return (getConfigRegister() & 0x0010) > 0;
+ return (getConfigRegister() & CHT8305_CFG_ALERT_HUMI) > 0;
 }
 
 
 bool CHT8305::getAlertTemperatureStatus()
 {
- return (getConfigRegister() & 0x0004) > 0;
+ return (getConfigRegister() & CHT8305_CFG_ALERT_TEMP) > 0;
 }
 
 
@@ -278,15 +280,10 @@ float CHT8305::getAlertLevelHumidity()
 }
 
 
-
-
 ////////////////////////////////////////////////
 //
 //  VOLTAGE
 //
-//  TODO verify conversion unit
-//  TODO check datasheet.
-//  TODO uint16_t in read register.
 float CHT8305::getVoltage()
 {
   uint8_t data[2] = { 0, 0};
@@ -331,7 +328,7 @@ int CHT8305::_readRegister(uint8_t reg, uint8_t * buf, uint8_t size)
 
   if (reg == CHT8305_REG_TEMPERATURE)  //  wait for conversion...
   {
-    delay(14);  //  2x 6.5 ms @ 14 bit. 
+    delay(14);  //  2x 6.5 ms @ 14 bit.
   }
 
   n = _wire->requestFrom(_address, size);

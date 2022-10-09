@@ -8,7 +8,7 @@
 
 Arduino library for CHT8305 temperature and humidity sensor.
 
-**EXPERIMENTAL** not tested yet - TODO buy hardware + test.
+**EXPERIMENTAL** not tested yet ==> buy hardware + test.
 
 If you happen to have hardware and are able to test this library, 
 please let me know your experiences.
@@ -124,7 +124,7 @@ Check the datasheet for details of the register bits.
 
 #### Getters / setters config register
 
-TODO elaborate & test
+Wrapper functions for easy access.
 
 - **void softReset()** sets the soft reset bit in the configuration, causing the sensor to reset.
 - **void setI2CClockStretch(bool on = false)**
@@ -161,7 +161,7 @@ See register 3 datasheet page 12.
 - **bool setAlertLevels(float temperature, float humidity)** 
   - the values will be truncated to the closest possible.
   - the alert supports high limit only ==> there is no low limit alert.
-  - note: the datasheet is ambigue wrt the formula used. TODO test/verify.
+  - note: the datasheet is ambigue wrt the formula used.
 - **float getAlertLevelTemperature()** idem.
 - **float getAlertLevelHumidity()** idem.
 
@@ -189,14 +189,15 @@ similar to temperature and humidity.  To be verified.
 
 ## Future
 
+- Buy hardware.
+- test (see below)
 - elaborate documentation.
-- fix TODO's in code.
-- fix TODO's in readme.md.
+
 
 #### test
 
-- buy hardware.
-- test AVR, ESP32, ...
+- test Temperature and Humidity
+- test AVR, ESP32, other platforms?
 - test performance.
 = test I2C speed.
 - test resolution bits.
