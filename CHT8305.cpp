@@ -18,6 +18,7 @@
 //                     refactor, move code to .cpp
 //  2022-10-13  0.1.3  adjust getVoltage() formula.(still unclear).
 //                     update readme.md  (some AVR test results)
+//                     add get- setConversionDelay()
 //
 
 
@@ -119,6 +120,19 @@ float CHT8305::getTemperature()
 {
   return _temperature;
 };
+
+
+void CHT8305::setConversionDelay(uint8_t cd)
+{
+  if (cd < 8) cd = 8;
+  _conversionDelay = cd;
+}
+
+
+uint8_t CHT8305::getConversionDelay()
+{
+  return _conversionDelay;
+}
 
 
 void CHT8305::setHumOffset(float offset)
@@ -378,7 +392,7 @@ int CHT8305::_readRegister(uint8_t reg, uint8_t * buf, uint8_t size)
 
   if (reg == CHT8305_REG_TEMPERATURE)  //  wait for conversion...
   {
-    delay(14);  //  2x 6.5 ms @ 14 bit.
+    delay(_conversionDelay);  //  2x 6.5 ms @ 14 bit = 14  (10 works).
   }
 
   n = _wire->requestFrom(_address, size);

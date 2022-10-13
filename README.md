@@ -98,7 +98,16 @@ Will return the same value until **read()** is called again.
 - **float getTemperature()** returns last temperature read.
 Will return the same value until **read()** is called again.
 
-  
+
+### Conversion delay
+
+- **void setConversionDelay(uint8_t cd = 14)** default is 14 milliseconds (datasheet).
+7 ms failed. 8 ms worked, so values below 8 are mapped to 8 in the library.
+Expect 10 ms is pretty save. Use at own risk.
+It might be that lower resolutions allow shorter delays. This is not tested yet.
+- **uint8_t getConversionDelay()** returns set value.
+
+
 ### Offset
 
 Adding offsets works well in normal range but might introduce 

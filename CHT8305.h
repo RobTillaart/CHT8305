@@ -65,6 +65,9 @@ public:
   uint32_t lastRead();
   float    getHumidity();
   float    getTemperature();
+  void     setConversionDelay(uint8_t cd = 14);
+  uint8_t  getConversionDelay();
+  
 
   //  adding offsets works well in normal range
   //  might introduce under- or overflow at the ends of the sensor range
@@ -146,14 +149,15 @@ public:
 
 
 private:
-  float    _humOffset     = 0.0;
-  float    _tempOffset    = 0.0;
-  float    _humidity      = 0.0;
-  float    _temperature   = 0.0;
-  uint32_t _lastRead      = 0;
+  float    _humOffset       = 0.0;
+  float    _tempOffset      = 0.0;
+  float    _humidity        = 0.0;
+  float    _temperature     = 0.0;
+  uint32_t _lastRead        = 0;
+  uint8_t  _conversionDelay = 14;
 
   TwoWire* _wire;
-  uint8_t  _address       = 0x40;
+  uint8_t  _address       = 0x40;  //  default.
 
   int      _readRegister(uint8_t reg, uint8_t * buf, uint8_t size);
   int      _writeRegister(uint8_t reg, uint8_t * buf, uint8_t size);
