@@ -8,10 +8,9 @@
 
 Arduino library for CHT8305 temperature and humidity sensor.
 
-**EXPERIMENTAL** not tested yet ==> buy hardware + test.
+**EXPERIMENTAL** minimal tested.
 
-If you happen to have hardware and are able to test this library, 
-please let me know your experiences.
+If you are able to test this library, please let me know your experiences.
 
 
 ## Description
@@ -33,6 +32,13 @@ The ALERT function is not supported in the first release of library.
 
 Register map see datasheet page 10.
 
+Tests
+- Temperature() and humidity() works on AVR.
+  - about 14 milliseconds at 14 bit resolution.
+- voltage works on AVR but meaning unclear
+- getManufacturer(), getVersionID() works on AVR.
+= 
+
 
 ### Hardware
 
@@ -49,6 +55,12 @@ Always check datasheet for connections.
 //             |               |
 //     IRQ ----| ALERT         |   only if enabled.
 //             +---------------+
+//
+//  check datasheet
+//  VCC     RED
+//  GND     BLACK
+//  SDA     YELLOW
+//  SCL     WHITE
 ```
 
 
@@ -180,42 +192,41 @@ The ALERT pin triggers with a falling edge (from HIGH to LOW).
 ### Voltage
 
 VCC measurement should be enabled by means of **void setVCCenable(true)**
-or by **setConfigRegister(0x0002)**.
+or by **setConfigRegister(0x0004)**.
 
-- **float getVoltage()** to be tested what unit is used.
+- **float getVoltage()** unclear what unit is used.
 
-Expected: 16 bit data implies ```voltage = 5.0V \* value / 65535.0;``` 
-similar to temperature and humidity. To be verified.
+Best guess: 16 bit data implies ```voltage = 5.0V \* value / 32768.0;``` 
+Varied slightly 5.000 - 4.999 also for 3V3 power supply. 
+Conclusion is unclear how to interpret this register.
 
 
 ### Meta data
 
 - **uint16_t getManufacturer()** returns 0x5959.
-- **uint16_t getVersionID()** return value may differ.
+- **uint16_t getVersionID()** return value may differ. 
+Test returned 0x8305.
 
 
 ## Future
 
-- Buy hardware.
 - test (see below)
 - elaborate documentation.
 
 #### test
 
-- test Temperature and Humidity
-- test AVR, ESP32, other platforms?
+- test ESP32, other platforms?
 - test performance.
 = test I2C speed.
 - test resolution bits.
+  - delay ?
 - test config functions.
 - test ALERT functions.
-- test getVoltage()
-- test getManufacturer(), getVersionID().
 - test write / readRegister with a single uint16_t to simplify code.
 
 ### Could
 
-- move code to .cpp
 - add **uint8_t getAddress()** 
 - add **void readTemperature()** does single acquisition.
 - add **void readHumidity()** does single acquisition.
+
