@@ -141,8 +141,8 @@ Check the datasheet for details of the register bits.
 |  7-6  | 0x00C0 |  ALTM           |  Alert Mode (datasheet)
 |  5    | 0x0020 |  APS            |  Alert pending status
 |  4    | 0x0010 |  H-ALT          |  Humidity Alert status
-|  3    | 0x0004 |  T-ALT          |  Temperature Alert status
-|  2    | 0x0002 |  VCC enable     |  1 = enable VCC measurement, 0 = disable (default)
+|  3    | 0x0008 |  T-ALT          |  Temperature Alert status
+|  2    | 0x0004 |  VCC enable     |  1 = enable VCC measurement, 0 = disable (default)
 |  1-0  | 0x0003 |  reserved.      |  do not change. 
 
 
