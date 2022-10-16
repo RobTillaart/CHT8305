@@ -27,10 +27,6 @@ More exact details for smaller ranges, see datasheet (page 8).
 
 One of the interesting functions is the support of an ALERT function.
 This prevents the need for continuous polling of the sensor.
-The ALERT function is not supported in the first release of library.
-The reason is that the sensor I have does not expose the ALERT pin.
-
-If you are able to test the ALERT functions, please let me know your experiences.
 
 
 #### Tests
@@ -41,6 +37,11 @@ If you are able to test the ALERT functions, please let me know your experiences
 - getVoltage() function works on AVR but meaning unclear.
 - getManufacturer(), getVersionID() works on AVR.
 - 
+
+The ALERT functions are not tested.
+The reason is that the sensor I have does not expose the ALERT pin.
+
+If you are able to test the ALERT functions, please let me know your experiences.
 
 
 ### Hardware
