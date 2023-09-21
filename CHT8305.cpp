@@ -91,7 +91,7 @@ int CHT8305::read()
   {
     _humidity += _humOffset;
     if (_humidity < 0.0)   _humidity = 0.0;
-    if (_humidity > 100.0) _humidity = 100.0
+    if (_humidity > 100.0) _humidity = 100.0;
   }
 
   return CHT8305_OK;
@@ -141,7 +141,7 @@ int CHT8305::readHumidity()
   {
     _humidity += _humOffset;
     if (_humidity < 0.0)   _humidity = 0.0;
-    if (_humidity > 100.0) _humidity = 100.0
+    if (_humidity > 100.0) _humidity = 100.0;
   }
 
   return CHT8305_OK;
