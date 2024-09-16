@@ -34,7 +34,7 @@ One of the interesting functions is the support of an ALERT function.
 This prevents the need for continuous polling of the sensor.
 
 
-#### 0.2.0 Breaking change
+### 0.2.0 Breaking change
 
 Version 0.2.0 introduced a breaking change.
 You cannot set the pins in **begin()** any more.
@@ -45,7 +45,7 @@ before calling **begin()**.
 Moved the address parameter from **begin()** to constructor.
 
 
-#### Tests
+### Tests
 
 - Temperature and humidity functions works on AVR.
   - default about 14 milliseconds at 14 bit resolution.
@@ -86,7 +86,7 @@ Always check datasheet for connections.
 Pull ups are needed on SDA, SCL and optional to ALERT.
 
 
-#### Alert
+### Alert
 
 The CHT8305 has an ALERT logic output pin with an open drain structure.
 This output is active low. (if the breakout supports this.)
@@ -94,12 +94,12 @@ This output is active low. (if the breakout supports this.)
 
 ## I2C 
 
-#### performance
+### performance
 
 I2C bus speeds is supported up to 400 KHz.
 
 
-#### Addresses
+### Addresses
 
 |  AD0  |   Address  |  Notes  |
 |:-----:|:----------:|:--------|
@@ -111,7 +111,7 @@ I2C bus speeds is supported up to 400 KHz.
 Pull ups are needed on SDA, SCL and optional to ALERT.
 
 
-#### I2C multiplexing
+### I2C multiplexing
 
 Sometimes you need to control more devices than possible with the default
 address range the device provides.
@@ -135,7 +135,7 @@ too if they are behind the multiplexer.
 #include "CHT8305.h"
 ```
 
-#### Constructor
+### Constructor
 
 - **CHT8305(const uint8_t address = CHT8305_DEFAULT_ADDRESS, TwoWire \*wire = &Wire)** Constructor 
 with default address (0x40) and I2C bus.
@@ -144,7 +144,7 @@ Returns error status.
 - **bool isConnected()** checks if address (default 0x40) can be seen on the I2C bus.
 
 
-#### Core
+### Core
 
 - **int read()** reads both the temperature and humidity.
 Can be called once per second.
@@ -161,7 +161,7 @@ Note: read(), readTemperature() and readHumidity() blocks each other,
 so you can call only one of them every second.
 
 
-#### Conversion delay
+### Conversion delay
 
 - **void setConversionDelay(uint8_t cd = 14)** default is 14 milliseconds (datasheet).
 7 ms failed. 8 ms worked, so values below 8 are mapped to 8 in the library.
@@ -170,7 +170,7 @@ It might be that lower resolutions allow shorter delays. This is not tested.
 - **uint8_t getConversionDelay()** returns set value.
 
 
-#### Offset
+### Offset
 
 Adding offsets works well in the "normal range" but might introduce 
 under- or overflow at the ends of the sensor range.
@@ -186,7 +186,7 @@ consider a mapping function for temperature and humidity.
 e.g. https://github.com/RobTillaart/MultiMap
 
 
-#### Configuration register
+### Configuration register
 
 Check the datasheet for details of the register bits.
 
@@ -210,7 +210,7 @@ Check the datasheet for details of the register bits.
 |  1-0  | 0x0003 |  reserved.      |  do not change. 
 
 
-#### Getters / setters configuration register
+### Getters / setters configuration register
 
 Note: setting **setConfigRegister(bitmask)** can be faster.
 
@@ -235,7 +235,7 @@ See datasheet for (limited) details.
 - **bool getVCCenable()** idem.
 
 
-#### Alert
+### Alert
 
 See register 3 datasheet page 12 for details.
 
@@ -263,7 +263,7 @@ See register 3 datasheet page 12 for details.
 The ALERT pin triggers with a falling edge (from HIGH to LOW).
 
 
-#### Voltage
+### Voltage
 
 VCC measurement should be enabled by means of **void setVCCenable(true)**
 or by **setConfigRegister(0x0004)**.
@@ -276,14 +276,31 @@ Varied slightly 5.000 - 4.999 also for 3V3 power supply.
 Conclusion: it is unclear how to interpret this register.
 
 
-#### Meta data
+### Meta data
 
 - **uint16_t getManufacturer()** returns 0x5959.
 - **uint16_t getVersionID()** return value may differ. 
 Test returned 0x8305.
 
 
-#### Register map 
+### Error handling
+
+Since 0.2.2 minimal error handling has been added. 
+This need to be improved in the future
+
+- **getLastError()** returns one of the values below.
+
+
+|  Error constant          |  value  |  Notes  |
+|:-------------------------|:-------:|:--------|
+|  CHT8305_OK              |     0   |
+|  CHT8305_ERROR_ADDR      |   -10   |
+|  CHT8305_ERROR_I2C       |   -11   |
+|  CHT8305_ERROR_CONNECT   |   -12   |
+|  CHT8305_ERROR_LASTREAD  |   -20   |
+
+
+### Register map 
 
 See datasheet page 10 for details
 

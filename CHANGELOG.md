@@ -6,11 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [0.2.2] - 2024-09-16
+- Fix #15, improve error handling.
+
+
+
 ## [0.2.1] - 2024-01-30
 - add multiplexing section to readme.md
 - update examples (URL)
 - minor edits
-
 
 ## [0.2.0] - 2023-12-05
 - refactor API, constructor, begin()

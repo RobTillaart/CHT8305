@@ -17,14 +17,24 @@ CHT8305::CHT8305(const uint8_t address, TwoWire *wire)
 {
   _wire    = wire;
   _address = address;
+  _error   = CHT8305_OK;
 }
 
 
 int CHT8305::begin()
 {
-  if ((_address < 0x40) || (_address > 0x43)) return CHT8305_ERROR_ADDR;
-  if (! isConnected()) return CHT8305_ERROR_CONNECT;
-  return CHT8305_OK;
+  if ((_address < 0x40) || (_address > 0x43))
+  {
+    _error = CHT8305_ERROR_ADDR;
+    return _error;
+  }
+  if (! isConnected())
+  {
+    _error = CHT8305_ERROR_CONNECT;
+    return _error;
+  }
+  _error = CHT8305_OK;
+  return _error;
 }
 
 
@@ -50,7 +60,8 @@ int CHT8305::read()
   //  do not read too fast
   if (millis() - _lastRead < 1000)
   {
-    return CHT8305_ERROR_LASTREAD;
+    _error = CHT8305_ERROR_LASTREAD;
+    return _error;
   }
   _lastRead = millis();
 
@@ -63,14 +74,15 @@ int CHT8305::read()
   _humidity    = tmp * (1.0 / 655.35);  //  == / 65535 * 100%
 
   if (_tempOffset != 0.0) _temperature += _tempOffset;
-  if (_humOffset  != 0.0) 
+  if (_humOffset  != 0.0)
   {
     _humidity += _humOffset;
     if (_humidity < 0.0)   _humidity = 0.0;
     if (_humidity > 100.0) _humidity = 100.0;
   }
 
-  return CHT8305_OK;
+  _error = CHT8305_OK;
+  return _error;
 }
 
 
@@ -79,7 +91,8 @@ int CHT8305::readTemperature()
   //  do not read too fast
   if (millis() - _lastRead < 1000)
   {
-    return CHT8305_ERROR_LASTREAD;
+    _error = CHT8305_ERROR_LASTREAD;
+    return _error;
   }
   _lastRead = millis();
 
@@ -94,7 +107,8 @@ int CHT8305::readTemperature()
     _temperature += _tempOffset;
   }
 
-  return CHT8305_OK;
+  _error = CHT8305_OK;
+  return _error;
 }
 
 
@@ -103,7 +117,8 @@ int CHT8305::readHumidity()
   //  do not read too fast
   if (millis() - _lastRead < 1000)
   {
-    return CHT8305_ERROR_LASTREAD;
+    _error = CHT8305_ERROR_LASTREAD;
+    return _error;
   }
   _lastRead = millis();
 
@@ -120,7 +135,8 @@ int CHT8305::readHumidity()
     if (_humidity > 100.0) _humidity = 100.0;
   }
 
-  return CHT8305_OK;
+  _error = CHT8305_OK;
+  return _error;
 }
 
 
@@ -403,6 +419,14 @@ uint16_t CHT8305::getVersionID()
 }
 
 
+int CHT8305::getLastError()
+{
+  int e = _error;
+  _error = CHT8305_OK;
+  return e;
+}
+
+
 ////////////////////////////////////////////////
 //
 //  PRIVATE
@@ -412,7 +436,11 @@ int CHT8305::_readRegister(uint8_t reg, uint8_t * buf, uint8_t size)
   _wire->beginTransmission(_address);
   _wire->write(reg);
   int n = _wire->endTransmission();
-  if (n != 0) return CHT8305_ERROR_I2C;
+  if (n != 0)
+  {
+    _error = CHT8305_ERROR_I2C;
+    return _error;
+  }
 
   if (reg == CHT8305_REG_TEMPERATURE)  //  wait for conversion...
   {
@@ -427,7 +455,8 @@ int CHT8305::_readRegister(uint8_t reg, uint8_t * buf, uint8_t size)
       buf[i] = _wire->read();
     }
   }
-  return CHT8305_OK;
+  _error = CHT8305_OK;
+  return _error;
 }
 
 
@@ -440,8 +469,13 @@ int CHT8305::_writeRegister(uint8_t reg, uint8_t * buf, uint8_t size)
     _wire->write(buf[i]);
   }
   int n = _wire->endTransmission();
-  if (n != 0) return CHT8305_ERROR_I2C;
-  return CHT8305_OK;
+  if (n != 0)
+  {
+    _error = CHT8305_ERROR_I2C;
+    return _error;
+  }
+  _error = CHT8305_OK;
+  return _error;
 }
 
 
