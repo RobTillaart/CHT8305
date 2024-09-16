@@ -19,12 +19,16 @@
 #define CHT8305_DEFAULT_ADDRESS          0x40
 #endif
 
+
 //  ERRORS
 #define CHT8305_OK                       0
 #define CHT8305_ERROR_ADDR               -10
 #define CHT8305_ERROR_I2C                -11
 #define CHT8305_ERROR_CONNECT            -12
+#define CHT8305_ERROR_BUFSIZE            -13
 #define CHT8305_ERROR_LASTREAD           -20
+#define CHT8305_ERROR_GENERIC            -999
+
 
 //  REGISTERS
 #define CHT8305_REG_TEMPERATURE          0x00
@@ -86,7 +90,7 @@ public:
 
 
   //  CONFIGURATION REGISTER
-  void     setConfigRegister(uint16_t bitmask);
+  bool     setConfigRegister(uint16_t bitmask);
   uint16_t getConfigRegister();
   //
   //  |  bit  |  mask  |  name           |  description  |
@@ -180,7 +184,7 @@ private:
 
   void     _setConfigMask(uint16_t mask);
   void     _clrConfigMask(uint16_t mask);
-  
+
   int      _error;
 };
 

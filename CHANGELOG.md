@@ -8,7 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.2.2] - 2024-09-16
 - Fix #15, improve error handling.
-
+- add return value **CHT8305_ERROR_BUFSIZE**
+- add return value **CHT8305_ERROR_GENERIC**
+- add return value **0xFFFF** for 2 functions.
+- update readme.md.
 
 
 ## [0.2.1] - 2024-01-30

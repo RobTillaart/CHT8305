@@ -190,8 +190,10 @@ e.g. https://github.com/RobTillaart/MultiMap
 
 Check the datasheet for details of the register bits.
 
-- **void setConfigRegister(uint16_t bitmask)** idem. Default value 0x1004.
+- **bool setConfigRegister(uint16_t bitmask)** idem. Default value 0x1004.
+Returns false if write fails.
 - **uint16_t getConfigRegister()** idem. 
+If 0x0000 is returned it may indicate an error.
 
 |  bit  |  mask  |  name           |  description  |
 |:-----:|:------:|:----------------|:--------------|
@@ -290,14 +292,17 @@ This need to be improved in the future
 
 - **getLastError()** returns one of the values below.
 
+|  Error constant          |   value  |  Notes  |
+|:-------------------------|:--------:|:--------|
+|  CHT8305_OK              |      0   |
+|  CHT8305_ERROR_ADDR      |    -10   |
+|  CHT8305_ERROR_I2C       |    -11   |
+|  CHT8305_ERROR_CONNECT   |    -12   |
+|  CHT8305_ERROR_BUFSIZE   |    -13   |
+|  CHT8305_ERROR_LASTREAD  |    -20   |
+|  CHT8305_ERROR_GENERIC   |    -999  |
+|                          |  0xFFFF  |  patch  |
 
-|  Error constant          |  value  |  Notes  |
-|:-------------------------|:-------:|:--------|
-|  CHT8305_OK              |     0   |
-|  CHT8305_ERROR_ADDR      |   -10   |
-|  CHT8305_ERROR_I2C       |   -11   |
-|  CHT8305_ERROR_CONNECT   |   -12   |
-|  CHT8305_ERROR_LASTREAD  |   -20   |
 
 
 ### Register map 
@@ -322,7 +327,6 @@ See datasheet page 10 for details
 - elaborate documentation.
 - more testing (platforms)
 
-
 #### Should
 
 - test ESP32, other platforms?
@@ -332,13 +336,12 @@ See datasheet page 10 for details
 - test configuration functions.
 - test ALERT functions.
 - test write / readRegister with a single uint16_t to simplify code.
-
+- test and elaborate error handling.
 
 #### Could
 
 - parameter testing
 - parameter defaults?
-
 
 #### Wont
 
