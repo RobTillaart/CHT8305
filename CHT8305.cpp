@@ -9,6 +9,31 @@
 #include "CHT8305.h"
 
 
+//  REGISTERS
+#define CHT8305_REG_TEMPERATURE         0x00
+#define CHT8305_REG_HUMIDITY            0x01
+#define CHT8305_REG_CONFIG              0x02
+#define CHT8305_REG_ALERT               0x03
+#define CHT8305_REG_VOLTAGE             0x04
+#define CHT8305_REG_MANUFACTURER        0xFE
+#define CHT8305_REG_VERSION             0xFF
+
+//  REGISTER MASKS
+#define CHT8305_CFG_SOFT_RESET          0x8000
+#define CHT8305_CFG_CLOCK_STRETCH       0x4000
+#define CHT8305_CFG_HEATER              0x2000
+#define CHT8305_CFG_MODE                0x1000
+#define CHT8305_CFG_VCCS                0x0800
+#define CHT8305_CFG_TEMP_RES            0x0400
+#define CHT8305_CFG_HUMI_RES            0x0300
+#define CHT8305_CFG_ALERT_MODE          0x00C0
+#define CHT8305_CFG_ALERT_PENDING       0x0020
+#define CHT8305_CFG_ALERT_HUMI          0x0010
+#define CHT8305_CFG_ALERT_TEMP          0x0008
+#define CHT8305_CFG_VCC_ENABLE          0x0004
+#define CHT8305_CFG_VCC_RESERVED        0x0003
+
+
 /////////////////////////////////////////////////////
 //
 // PUBLIC
@@ -71,9 +96,10 @@ int CHT8305::read()
     return _error;
   }
 
-  uint16_t tmp = data[0] << 8 | data[1];
+  uint16_t tmp = (data[0] << 8) | data[1];
   _temperature = tmp * (165.0 / 65535.0) - 40.0;
-   tmp = data[2] << 8 | data[3];
+
+   tmp = (data[2] << 8) | data[3];
   _humidity    = tmp * (1.0 / 655.35);  //  == / 65535 * 100%
 
   if (_tempOffset != 0.0) _temperature += _tempOffset;
@@ -105,7 +131,7 @@ int CHT8305::readTemperature()
     return _error;
   }
 
-  uint16_t tmp = data[0] << 8 | data[1];
+  uint16_t tmp = (data[0] << 8) | data[1];
   _temperature = tmp * (165.0 / 65535.0) - 40.0;
 
   if (_tempOffset != 0.0)
@@ -134,7 +160,7 @@ int CHT8305::readHumidity()
     return _error;
   }
 
-  uint16_t tmp = data[0] << 8 | data[1];
+  uint16_t tmp = (data[0] << 8) | data[1];
   _humidity    = tmp * (1.0 / 655.35);  //  == / 65535 * 100%
 
   if (_humOffset  != 0.0)
@@ -229,7 +255,7 @@ uint16_t CHT8305::getConfigRegister()
   {
     return 0;
   }
-  uint16_t tmp = data[0] << 8 | data[1];
+  uint16_t tmp = (data[0] << 8) | data[1];
   return tmp;
 }
 
@@ -420,7 +446,7 @@ float CHT8305::getVoltage()
   {
     return CHT8305_ERROR_GENERIC;
   }
-  uint16_t tmp = data[0] << 8 | data[1];
+  uint16_t tmp = (data[0] << 8) | data[1];
   return tmp * (5.0 / 32768.0);   //  best guess
 }
 
@@ -436,7 +462,7 @@ uint16_t CHT8305::getManufacturer()
   {
     return 0xFFFF;
   }
-  uint16_t tmp = data[0] << 8 | data[1];
+  uint16_t tmp = (data[0] << 8) | data[1];
   return tmp;
 }
 
@@ -448,7 +474,7 @@ uint16_t CHT8305::getVersionID()
   {
     return 0xFFFF;
   }
-  uint16_t tmp = data[0] << 8 | data[1];
+  uint16_t tmp = (data[0] << 8) | data[1];
   return tmp;
 }
 

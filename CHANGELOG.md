@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - add return value **CHT8305_ERROR_BUFSIZE**
 - add return value **CHT8305_ERROR_GENERIC**
 - add return value **0xFFFF** for 2 functions.
+- set default values 0.0 for **offset** parameters.
+- moved register defines to .cpp file.
+- fix missing names in keywords.txt
+- add plotter and performance example
 - update readme.md.
 
 

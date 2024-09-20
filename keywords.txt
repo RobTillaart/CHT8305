@@ -7,11 +7,15 @@ CHT8305	KEYWORD1
 # Methods and Functions (KEYWORD2)
 begin	KEYWORD2
 isConnected	KEYWORD2
+getAddress	KEYWORD2
 
 read	KEYWORD2
+readTemperature	KEYWORD2
+readHumidity	KEYWORD2
+
 lastRead	KEYWORD2
-getTemperature	KEYWORD2
 getHumidity	KEYWORD2
+getTemperature	KEYWORD2
 setConversionDelay	KEYWORD2
 getConversionDelay	KEYWORD2
 
@@ -49,6 +53,11 @@ getAlertTemperatureStatus	KEYWORD2
 setAlertLevels	KEYWORD2
 getAlertLevelTemperature	KEYWORD2
 getAlertLevelHumidity	KEYWORD2
+
+getVoltage	KEYWORD2
+
+getManufacturer	KEYWORD2
+getVersionID	KEYWORD2
 
 
 # Constants (LITERAL1)

@@ -30,31 +30,6 @@
 #define CHT8305_ERROR_GENERIC            -999
 
 
-//  REGISTERS
-#define CHT8305_REG_TEMPERATURE          0x00
-#define CHT8305_REG_HUMIDITY             0x01
-#define CHT8305_REG_CONFIG               0x02
-#define CHT8305_REG_ALERT                0x03
-#define CHT8305_REG_VOLTAGE              0x04
-#define CHT8305_REG_MANUFACTURER         0xFE
-#define CHT8305_REG_VERSION              0xFF
-
-//  REGISTER MASKS
-#define CHT8305_CFG_SOFT_RESET          0x8000
-#define CHT8305_CFG_CLOCK_STRETCH       0x4000
-#define CHT8305_CFG_HEATER              0x2000
-#define CHT8305_CFG_MODE                0x1000
-#define CHT8305_CFG_VCCS                0x0800
-#define CHT8305_CFG_TEMP_RES            0x0400
-#define CHT8305_CFG_HUMI_RES            0x0300
-#define CHT8305_CFG_ALERT_MODE          0x00C0
-#define CHT8305_CFG_ALERT_PENDING       0x0020
-#define CHT8305_CFG_ALERT_HUMI          0x0010
-#define CHT8305_CFG_ALERT_TEMP          0x0008
-#define CHT8305_CFG_VCC_ENABLE          0x0004
-#define CHT8305_CFG_VCC_RESERVED        0x0003
-
-
 class CHT8305
 {
 public:
@@ -82,14 +57,15 @@ public:
 
 
   //  adding offsets works well in normal range
-  void     setHumidityOffset(float offset);
+  void     setHumidityOffset(float offset = 0.0);
   //  might introduce under- or overflow at the ends of the sensor range
-  void     setTemperatureOffset(float offset);
+  void     setTemperatureOffset(float offset = 0.0);
   float    getHumidityOffset();
   float    getTemperatureOffset();
 
 
   //  CONFIGURATION REGISTER
+  //  default configRegister = 0x1004 (explicit no default parameter)
   bool     setConfigRegister(uint16_t bitmask);
   uint16_t getConfigRegister();
   //
@@ -136,13 +112,12 @@ public:
   void     setVCCenable(bool enable = true);
   bool     getVCCenable();
 
-
-  //  ALERT FUNCTIONS
-  //  mode   trigger
-  //    0      T or H     (default)
-  //    1      T
-  //    2      H
-  //    3      T and H
+  //       ALERT  FUNCTIONS
+  //       mode    trigger
+  //         0       T or H     (default)
+  //         1       T
+  //         2       H
+  //         3       T and H
   bool     setAlertTriggerMode(uint8_t mode = 0);
   uint8_t  getAlertTriggerMode();
   bool     getAlertPendingStatus();
@@ -157,6 +132,8 @@ public:
 
 
   //  VOLTAGE
+  //       one need to call setVCCenable(true) first.
+  //       meaning of this function is unclear.
   float    getVoltage();
 
 
@@ -185,7 +162,7 @@ private:
   void     _setConfigMask(uint16_t mask);
   void     _clrConfigMask(uint16_t mask);
 
-  int      _error;
+  int      _error = CHT8305_OK;
 };
 
 
