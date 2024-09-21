@@ -270,8 +270,8 @@ See datasheet for (limited) details.
 - **uint8_t getTemperatureResolution()** idem.
 - **void setHumidityResolution(uint8_t res = 0)** 2 = 8 bit, 1 = 11 bit, 0 = 14 bit (default).
 - **uint8_t getHumidityResolution()** idem.
-- **void setVCCenable(bool enable = false)** idem.
-- **bool getVCCenable()** idem.
+- **void setVCCenable(bool enable = false)** enable VCC measurement of the power supply.
+- **bool getVCCenable()** return current status of enable bit.
 
 
 ### Alert
@@ -302,17 +302,18 @@ See register 3 datasheet page 12 for details.
 The ALERT pin triggers with a falling edge (from HIGH to LOW).
 
 
-### Voltage
+### Supply voltage
 
-VCC measurement should be enabled by means of **void setVCCenable(true)**
-or by **setConfigRegister(0x0004)**.
+(datasheet 1.1.5)
+The chip has a feature to measure supply voltage (VCC) with 16bit output data.
+VCC measurement should be enabled by means of **void setVCCenable(true)**.
 
 - **float getVoltage()** unclear what unit is used.
 
-Best guess for now: 16 bit data implies ```voltage = 5.0V * value / 32768.0;```
+Best guess for now: 16 bit data implies ```voltage = 5.0V * value / 32767.0;```
 Varied slightly 5.000 - 4.999 also for 3V3 power supply.
 
-Conclusion: it is unclear how to interpret this register.
+Conclusion: it is not 100 % clear how to interpret this register.
 
 
 ### Meta data
